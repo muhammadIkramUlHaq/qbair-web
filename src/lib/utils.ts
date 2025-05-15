@@ -1,11 +1,6 @@
-import { TripType } from "@/types/trip";
+import { ParsedParams, TripType, ValidationResult } from "@/types/trip";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
-interface ValidationResult {
-  departureDate?: string;
-  returnDate?: string;
-}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -28,11 +23,19 @@ export function getNextDay(dateString: string): string {
   return formatDate(date);
 }
 
-export function isValidDate(
-  value?: string | null,
-  minDate: string = formatDate()
-): boolean {
-  return !!value && /^\d{4}-\d{2}-\d{2}$/.test(value) && value >= minDate;
+export function isValidDateFormat(value?: string | null): boolean {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(value);
+
+  return (
+    date instanceof Date &&
+    !isNaN(date.getTime()) &&
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() + 1 === month &&
+    date.getUTCDate() === day
+  );
 }
 
 export const validateForm = (
@@ -43,14 +46,14 @@ export const validateForm = (
   const errors: ValidationResult = {};
   const today = formatDate();
 
-  if (!departureDate || !isValidDate(departureDate)) {
+  if (!departureDate || !isValidDateFormat(departureDate)) {
     errors.departureDate = "Please enter a valid departure date.";
   } else if (departureDate < today) {
     errors.departureDate = "Departure date cannot be in the past.";
   }
 
   if (tripType === TripType.TWO_WAY) {
-    if (!returnDate || !isValidDate(returnDate)) {
+    if (!returnDate || !isValidDateFormat(returnDate)) {
       const msg = "Please enter a valid return date.";
       errors.returnDate = msg;
     } else if (returnDate < departureDate) {
@@ -61,3 +64,30 @@ export const validateForm = (
 
   return errors;
 };
+
+export function parseQueryParams(searchParams: URLSearchParams): ParsedParams {
+  const today = formatDate();
+  const paramTrip = searchParams.get("trip") as TripType | null;
+  const paramDeparture = searchParams.get("departure");
+  const paramReturn = searchParams.get("return");
+
+  const tripType =
+    paramTrip === TripType.TWO_WAY ? TripType.TWO_WAY : TripType.ONE_WAY;
+
+  const departureDate = isValidDateFormat(paramDeparture)
+    ? paramDeparture!
+    : today;
+
+  const returnDate =
+    tripType === TripType.TWO_WAY
+      ? isValidDateFormat(paramReturn)
+        ? paramReturn!
+        : getNextDay(departureDate)
+      : "";
+
+  return {
+    tripType,
+    departureDate,
+    returnDate,
+  };
+}

@@ -9,7 +9,7 @@ import {
   cn,
   formatDate,
   getNextDay,
-  isValidDate,
+  parseQueryParams,
   validateForm,
 } from "@/lib/utils";
 import { TripType } from "@/types/trip";
@@ -27,30 +27,16 @@ const BookingPage = () => {
   const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
-    const paramTrip = searchParams.get("trip") as TripType | null;
-    const paramDeparture = searchParams.get("departure");
-    const paramReturn = searchParams.get("return");
+    const {
+      tripType: parsedTripType,
+      departureDate: parsedDepartureDate,
+      returnDate: parsedReturnDate,
+    } = parseQueryParams(searchParams);
 
-    const trip =
-      paramTrip === TripType.TWO_WAY ? TripType.TWO_WAY : TripType.ONE_WAY;
-
-    const departure = isValidDate(paramDeparture) ? paramDeparture! : today;
-
-    // Default return to empty unless trip is two-way
-    let returnVal = "";
-    if (trip === TripType.TWO_WAY) {
-      if (isValidDate(paramReturn)) {
-        returnVal = paramReturn!;
-      } else {
-        // Fallback: return = departure + 1 day
-        returnVal = getNextDay(departure);
-      }
-    }
-
-    setTripType(trip);
-    setDepartureDate(departure);
-    setReturnDate(returnVal);
-  }, [searchParams, today]);
+    setTripType(parsedTripType);
+    setDepartureDate(parsedDepartureDate);
+    setReturnDate(parsedReturnDate);
+  }, [searchParams]);
 
   const clearError = (field: "departureDate" | "returnDate") =>
     setErrors((prev) => ({ ...prev, [field]: undefined }));

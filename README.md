@@ -72,3 +72,17 @@ The project structure follows a standard React application layout:
    ├── tsconfig.json        # TypeScript config
    └── vite.config.ts       # Vite config
 ```
+
+
+## 🔍 Search Query Examples
+
+These examples demonstrate how to pre-fill the form via query parameters:
+
+| Query                                                   | Description                                                                         |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `/?departure=2025-04-30`                                | Prefills only the **departure date** (defaults to one-way).                         |
+| `/?return=2025-05-01&trip=two-way`                      | Prefills **return date** and sets the trip to two-way. Departure defaults to today. |
+| `/?departure=2025-04-30&return=2025-05-01&trip=two-way` | Fully prefilled two-way trip with both dates.                                       |
+| `/?trip=two-way`                                        | Sets trip type to **two-way** and auto-fills return date as departure + 1.          |
+| `/?departure=2025-01-01&trip=one-way`                   | Prefills departure date and ensures **one-way** is selected.                        |
+| `/?departure=invalid-date&trip=two-way`                 | Invalid values are ignored and fallbacks are applied.                               |                          |
