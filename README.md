@@ -2,8 +2,6 @@
 
 A minimalistic and elegant flight booking interface built with React, Vite, TypeScript, and Tailwind CSS. Supports one-way and two-way bookings with smart validations and URL-based pre-filling.
 
----
-
 ## ⚙️ Prerequisites
 
 Ensure the following tools are installed on your machine:
@@ -11,16 +9,12 @@ Ensure the following tools are installed on your machine:
 - **Node.js** (v16+)
 - **PNPM** (v9+)
 
----
-
 ## 🛠️ Technologies Used
 
 - [React](https://reactjs.org/)
 - [Vite](https://vitejs.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-
----
 
 ## 🚀 Getting Started
 
@@ -72,7 +66,7 @@ The project structure follows a standard React application layout:
    │   ├── styles/          # Tailwind and global styles
    │   ├── App.tsx          # Route setup and entry
    │   └── main.tsx         # React root rendering
-   ├── .eslint.config.js    # ESLint configuration
+   ├── eslint.config.js    # ESLint configuration
    ├── postcss.config.js    # PostCSS configuration
    ├── tailwind.config.js   # Tailwind config
    ├── tsconfig.json        # TypeScript config
